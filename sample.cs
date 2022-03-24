@@ -21,3 +21,26 @@ class TaskThrottle
             lstTask.Clear();
         }
     }
+
+
+static void RunPara()
+        {
+            List<Task> lstTask = new List<Task>();
+            Sample samp = new Sample();
+
+            for (int i = 0; i < 30; i++)
+            {
+                if (i != 0 && lstTask.Select(x => x.Status != TaskStatus.RanToCompletion).Count() % 3 == 0)
+                {
+                    Console.WriteLine("wait for 4-3 task");
+                    Task.WaitAll(lstTask.ToArray());
+                }
+
+                int j = i;
+                lstTask.Add(Task.Run(() => samp.Startup(j)));
+            }
+
+            Console.WriteLine("wait for remaining");
+            Task.WaitAll(lstTask.ToArray());
+            Console.WriteLine("all over");
+        }
